@@ -1,0 +1,68 @@
+#!/usr/bin/env python3
+
+"""Create a new lab entry."""
+
+import argparse
+import json
+import urllib.parse
+import requests
+import sys
+
+from _settings import HOSTS
+
+
+def add_lab(args):
+    host = HOSTS[args.host]
+
+    headers = {
+        "Authorization": host['token'],
+        "Content-Type": "application/json"
+    }
+
+    payload = {
+        "name": args.name,
+        "contact": {
+            "name": args.first_name,
+            "surname": args.last_name,
+            "email": args.email,
+        }
+    }
+
+    url = urllib.parse.urljoin(host['url'], "/lab")
+
+    # ToDo: reuse to create tokens
+    # url = urlparse.urljoin(host['url'], "/token")
+
+    if args.dry:
+        print("Dry run - not sending any request")
+        print(headers)
+        print(payload)
+        return
+
+    response = requests.post(url, data=json.dumps(payload), headers=headers)
+
+    print("Response:")
+    print(response.content)
+
+
+def main(argv):
+    parser = argparse.ArgumentParser(description="Create a lab entry")
+    parser.add_argument('name',
+                        help="Name of the lab i.e. lab-something")
+    parser.add_argument('--first-name', required=True,
+                        help="First name of the contact person")
+    parser.add_argument('--last-name', required=True,
+                        help="Last name of the contact person")
+    parser.add_argument('--email', required=True,
+                        help="Email address of the contact person")
+    parser.add_argument('--host', required=True, choices=HOSTS.keys(),
+                        help="Hostname of the API server")
+    parser.add_argument('--dry', action='store_true',
+                        help="Dry run, do not send any request")
+    args = parser.parse_args(argv)
+
+    add_lab(args)
+
+
+if __name__ == "__main__":
+    main(sys.argv[1:])
