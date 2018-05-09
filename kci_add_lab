@@ -28,7 +28,11 @@ import urllib.parse
 import requests
 import sys
 
-from _settings import HOSTS
+try:
+    from _settings import HOSTS
+except ImportError:
+    print("Warning: no local _settings module found")
+    from _sample_settings import HOSTS
 
 
 def add_lab(args):
