@@ -15,6 +15,7 @@
 # along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+import argparse
 import json
 import urllib.parse
 
@@ -23,6 +24,15 @@ try:
 except ImportError:
     print("Warning: no local _settings module found")
     from _sample_settings import HOSTS
+
+
+def create_parser(descr):
+    parser = argparse.ArgumentParser(description=descr)
+    parser.add_argument('--host', required=True, choices=HOSTS.keys(),
+                        help="Hostname of the API server")
+    parser.add_argument('--dry', action='store_true',
+                        help="Dry run, do not send any request")
+    return parser
 
 
 def add_lab_request(hostname, opts):

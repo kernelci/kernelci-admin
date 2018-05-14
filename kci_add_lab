@@ -22,15 +22,14 @@
 
 """Create a new lab entry."""
 
-import argparse
 import requests
 import sys
 
-from kci_admin import HOSTS, add_lab_request
+from kci_admin import HOSTS, create_parser, add_lab_request
 
 
 def main(argv):
-    parser = argparse.ArgumentParser(description="Create a lab entry")
+    parser = create_parser("Create a lab entry")
     parser.add_argument('--lab-name', required=True,
                         help="Name of the lab i.e. lab-something")
     parser.add_argument('--first-name', required=True,
@@ -39,10 +38,6 @@ def main(argv):
                         help="Last name of the contact person")
     parser.add_argument('--email', required=True,
                         help="Email address of the contact person")
-    parser.add_argument('--host', required=True, choices=HOSTS.keys(),
-                        help="Hostname of the API server")
-    parser.add_argument('--dry', action='store_true',
-                        help="Dry run, do not send any request")
     args = parser.parse_args(argv)
 
     opts = {o: getattr(args, o) for o in
