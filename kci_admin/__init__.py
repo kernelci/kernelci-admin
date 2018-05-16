@@ -17,6 +17,7 @@
 
 import argparse
 import json
+import requests
 import urllib.parse
 
 try:
@@ -35,11 +36,19 @@ def parser(descr):
     return parser
 
 
-def request(hostname, path, payload):
+def request(hostname, path, payload=None):
     host = HOSTS[hostname]
     url = urllib.parse.urljoin(host['url'], path)
     headers = {
         "Authorization": host['token'],
         "Content-Type": "application/json"
     }
-    return url, headers, json.dumps(payload)
+    return url, headers, json.dumps(payload) if payload else None
+
+
+def request_get(hostname, path):
+    url, headers, _ = request(hostname, path)
+    response = requests.get(url, headers=headers)
+    response.raise_for_status()
+    data = json.loads(response.content.decode('utf8'))
+    return data
