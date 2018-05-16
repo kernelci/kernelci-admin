@@ -19,7 +19,9 @@ from . import request as kci_request
 from . import parser as kci_parser
 
 
-def parser_create(descr="Create a lab entry"):
+description_create = "Create a lab entry"
+
+def parser_create(descr=description_create):
     parser = kci_parser(descr)
     parser.add_argument('--lab-name', required=True,
                         help="Name of the lab i.e. lab-something")

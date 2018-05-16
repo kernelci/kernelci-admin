@@ -27,14 +27,8 @@ import sys
 import kci_admin.lab
 
 
-def main(argv):
-    parser = kci_admin.lab.parser_create()
-    args = parser.parse_args(argv)
-    opts = {o: getattr(args, o) for o in
-            ['lab_name', 'first_name', 'last_name', 'email']}
-    url, headers, data = kci_admin.lab.request_create(args.host, opts)
-
-    if args.dry:
+def post_if_not_dry(dry, url, headers, data):
+    if dry:
         print("Dry run - not sending any request")
         print("URL: {}".format(url))
         print(headers)
@@ -43,6 +37,40 @@ def main(argv):
         response = requests.post(url, headers=headers, data=data)
         print("Response:")
         print(response.content)
+        response.raise_for_status()
+
+
+def cmd_add_lab(args):
+    parser = kci_admin.lab.parser_create()
+    args = parser.parse_args(args)
+    opts = {o: getattr(args, o) for o in
+            ['lab_name', 'first_name', 'last_name', 'email']}
+    req = kci_admin.lab.request_create(args.host, opts)
+    post_if_not_dry(args.dry, *req)
+cmd_add_lab.description = kci_admin.lab.description_create
+
+
+def main(argv):
+    cmds = {}
+    for name, obj in globals().items():
+        parsed = name.split('cmd_')
+        if len(parsed) != 2:
+            continue
+        cmds[parsed[1]] = obj
+    cmd = cmds.get(argv[0]) if len(argv) else None
+    if cmd is None:
+        print("""\
+Invalid command.
+
+Usage:
+  kci COMMAND <OPTIONS>
+
+Available commands:\
+""")
+        for name, func in cmds.items():
+            print("  {:16s} {}".format(name, func.description))
+        sys.exit(1)
+    cmd(argv[1:])
 
 
 if __name__ == "__main__":
