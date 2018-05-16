@@ -26,7 +26,7 @@ except ImportError:
     from _sample_settings import HOSTS
 
 
-def create_parser(descr):
+def parser(descr):
     parser = argparse.ArgumentParser(description=descr)
     parser.add_argument('--host', required=True, choices=HOSTS.keys(),
                         help="Hostname of the API server")
@@ -35,36 +35,11 @@ def create_parser(descr):
     return parser
 
 
-def add_lab_request(hostname, opts):
-    """Create a request to add a LAVA lab entry into the backend.
-
-    The `hostname` is the name to look up in the HOSTS from the settings.
-
-    The `opts` dictionary should contain the following fields:
-    * name: Name of the LAVA lab
-    * first_name: First name of a person to contact for the lab
-    * last_name: Last name of a person to contact for the lab
-    * email: Email address of a person to contact for the lab
-
-    It returns a 3-tuple with (url, data, payload) suitable to be used with the
-    standard `requests.post()` function.
-    """
+def request(hostname, path, payload):
     host = HOSTS[hostname]
-
+    url = urllib.parse.urljoin(host['url'], path)
     headers = {
         "Authorization": host['token'],
         "Content-Type": "application/json"
     }
-
-    payload = {
-        "name": opts['lab_name'],
-        "contact": {
-            "name": opts['first_name'],
-            "surname": opts['last_name'],
-            "email": opts['email'],
-        }
-    }
-
-    url = urllib.parse.urljoin(host['url'], "/lab")
-
-    return url, json.dumps(payload), headers
+    return url, headers, json.dumps(payload)

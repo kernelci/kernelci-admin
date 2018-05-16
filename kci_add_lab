@@ -24,33 +24,23 @@
 
 import requests
 import sys
-
-from kci_admin import HOSTS, create_parser, add_lab_request
+import kci_admin.lab
 
 
 def main(argv):
-    parser = create_parser("Create a lab entry")
-    parser.add_argument('--lab-name', required=True,
-                        help="Name of the lab i.e. lab-something")
-    parser.add_argument('--first-name', required=True,
-                        help="First name of the contact person")
-    parser.add_argument('--last-name', required=True,
-                        help="Last name of the contact person")
-    parser.add_argument('--email', required=True,
-                        help="Email address of the contact person")
+    parser = kci_admin.lab.parser_create()
     args = parser.parse_args(argv)
-
     opts = {o: getattr(args, o) for o in
             ['lab_name', 'first_name', 'last_name', 'email']}
-    url, payload, headers = add_lab_request(args.host, opts)
+    url, headers, data = kci_admin.lab.request_create(args.host, opts)
 
     if args.dry:
         print("Dry run - not sending any request")
         print("URL: {}".format(url))
         print(headers)
-        print(payload)
+        print(data)
     else:
-        response = requests.post(url, data=payload, headers=headers)
+        response = requests.post(url, headers=headers, data=data)
         print("Response:")
         print(response.content)
 
