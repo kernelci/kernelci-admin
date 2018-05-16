@@ -26,6 +26,7 @@ import json
 import requests
 import sys
 import kci_admin.lab
+import kci_admin.token
 
 
 def dump_dict(d, indent='  ', level=1):
@@ -75,6 +76,30 @@ def cmd_list_labs(args):
         dump_dict(lab)
         print()
 cmd_list_labs.description = kci_admin.lab.description_get_list
+
+
+def cmd_add_token(args):
+    parser = kci_admin.token.parser_create()
+    args = parser.parse_args(args)
+    opts = {o: getattr(args, o) for o in
+            ['username', 'email']}
+    req = kci_admin.token.request_create(args.host, opts)
+    post_if_not_dry(args.dry, *req)
+cmd_add_token.description = kci_admin.token.description_create
+
+
+def cmd_list_tokens(args):
+    parser = kci_admin.token.parser_list()
+    args = parser.parse_args(args)
+    tokens = kci_admin.token.get_list(args.host)
+    for token in tokens:
+        username = token.pop('username')
+        if args.username and args.username != username:
+            continue
+        print(username)
+        dump_dict(token)
+        print()
+cmd_list_tokens.description = kci_admin.token.description_get_list
 
 
 def main(argv):

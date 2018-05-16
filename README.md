@@ -21,7 +21,9 @@ Usage:
 
 Available commands:
   add_lab          Create a lab entry
+  add_token        Create a user API token
   list_labs        List all the existing labs
+  list_tokens      List all the existing tokens
 ```
 
 Each command will also require some options.  Typically, commands need at least
