@@ -16,10 +16,13 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 from . import request as kci_request
+from . import request_get as kci_request_get
 from . import parser as kci_parser
 
 
 description_create = "Create a lab entry"
+description_get_list = "List all the existing labs"
+
 
 def parser_create(descr=description_create):
     parser = kci_parser(descr)
@@ -31,6 +34,13 @@ def parser_create(descr=description_create):
                         help="Last name of the contact person")
     parser.add_argument('--email', required=True,
                         help="Email address of the contact person")
+    return parser
+
+
+def parser_list(descr=description_get_list):
+    parser = kci_parser(descr)
+    parser.add_argument('--lab-name',
+                        help="Only show details for this given lab")
     return parser
 
 
@@ -57,3 +67,8 @@ def request_create(hostname, opts):
         }
     }
     return kci_request(hostname, "/lab", payload)
+
+
+def get_list(hostname):
+    data = kci_request_get(hostname, "/lab")
+    return data['result']

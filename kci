@@ -22,9 +22,22 @@
 
 """Create a new lab entry."""
 
+import json
 import requests
 import sys
 import kci_admin.lab
+
+
+def dump_dict(d, indent='  ', level=1):
+    indent_str = indent * level
+    n = 24 - len(indent_str)
+    fmt = "{{}}{{:{n}s}} {{}}".format(n=n)
+    for k, v in d.items():
+        if isinstance(v, dict):
+            print(''.join([indent_str, k]))
+            dump_dict(v, indent, level+1)
+        else:
+            print(fmt.format(indent_str, k, v))
 
 
 def post_if_not_dry(dry, url, headers, data):
@@ -35,9 +48,9 @@ def post_if_not_dry(dry, url, headers, data):
         print(data)
     else:
         response = requests.post(url, headers=headers, data=data)
-        print("Response:")
-        print(response.content)
         response.raise_for_status()
+        print("Response:")
+        dump_dict(json.loads(response.content.decode('utf8'))['result'][0])
 
 
 def cmd_add_lab(args):
@@ -48,6 +61,20 @@ def cmd_add_lab(args):
     req = kci_admin.lab.request_create(args.host, opts)
     post_if_not_dry(args.dry, *req)
 cmd_add_lab.description = kci_admin.lab.description_create
+
+
+def cmd_list_labs(args):
+    parser = kci_admin.lab.parser_list()
+    args = parser.parse_args(args)
+    labs = kci_admin.lab.get_list(args.host)
+    for lab in labs:
+        lab_name = lab.pop('name')
+        if args.lab_name and args.lab_name != lab_name:
+            continue
+        print(lab_name)
+        dump_dict(lab)
+        print()
+cmd_list_labs.description = kci_admin.lab.description_get_list
 
 
 def main(argv):
