@@ -30,6 +30,20 @@ def parser_create(descr=description_create):
                         help="Username of the user")
     parser.add_argument('--email', required=True,
                         help="email address of the user")
+    parser.add_argument('--admin', action='store_true',
+                        help="enable admin permission")
+    parser.add_argument('--superuser', action='store_true',
+                        help="enable superuser permission")
+    parser.add_argument('--get', action='store_true',
+                        help="enable GET permission")
+    parser.add_argument('--post', action='store_true',
+                        help="enable POST permission")
+    parser.add_argument('--delete', action='store_true',
+                        help="enable DELETE permission")
+    parser.add_argument('--new-tokens', action='store_true',
+                        help="enable permission to create new tokens")
+    parser.add_argument('--upload', action='store_true',
+                        help="enable upload permission")
     return parser
 
 
@@ -40,8 +54,7 @@ def parser_list(descr=description_get_list):
     return parser
 
 
-def request_create(hostname, opts):
-    payload = {k: opts[k] for k in ['username', 'email']}
+def request_create(hostname, payload):
     return kci_request(hostname, "/token", payload)
 
 

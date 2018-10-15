@@ -81,8 +81,11 @@ cmd_list_labs.description = kci_admin.lab.description_get_list
 def cmd_add_token(args):
     parser = kci_admin.token.parser_create()
     args = parser.parse_args(args)
-    opts = {o: getattr(args, o) for o in
-            ['username', 'email']}
+    opts = {o: getattr(args, o) for o in ['username', 'email']}
+    for prop in ['admin', 'superuser', 'get', 'post', 'delete',
+                 'new_tokens', 'upload']:
+        if getattr(args, prop):
+            opts[prop] = True
     req = kci_admin.token.request_create(args.host, opts)
     post_if_not_dry(args.dry, *req)
 cmd_add_token.description = kci_admin.token.description_create
