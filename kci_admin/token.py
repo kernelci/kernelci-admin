@@ -61,3 +61,8 @@ def request_create(hostname, payload):
 def get_list(hostname):
     data = kci_request_get(hostname, "/token")
     return data['result']
+
+
+def get_dict(hostname):
+    tokens_list = get_list(hostname)
+    return {t['_id']['$oid']: t for t in tokens_list}
