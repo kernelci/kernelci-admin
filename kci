@@ -120,6 +120,10 @@ Invalid command.
 Usage:
   kci COMMAND <OPTIONS>
 
+To get command-specific command help:
+
+  kci COMMAND --help
+
 Available commands:\
 """)
         for name, func in cmds.items():
