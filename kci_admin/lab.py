@@ -18,6 +18,7 @@
 from . import request as kci_request
 from . import request_get as kci_request_get
 from . import parser as kci_parser
+from . import token
 
 
 description_create = "Create a lab entry"
@@ -70,5 +71,10 @@ def request_create(hostname, opts):
 
 
 def get_list(hostname):
+    tokens = token.get_dict(hostname)
     data = kci_request_get(hostname, "/lab")
+    labs = data["result"]
+    for lab in labs:
+        token_id = lab['token']['$oid']
+        lab['token'] = tokens[token_id]['token']
     return data['result']
