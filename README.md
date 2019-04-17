@@ -19,11 +19,17 @@ these commands when simply running `kci`:
 Usage:
   kci COMMAND <OPTIONS>
 
+To get command-specific command help:
+
+  kci COMMAND --help
+
 Available commands:
   add_lab          Create a lab entry
-  add_token        Create a user API token
   list_labs        List all the existing labs
+  remove_lab       Remove lab entry
+  add_token        Create a user API token
   list_tokens      List all the existing tokens
+  remove_token     Remove user API token
 ```
 
 Each command will also require some options.  Typically, commands need at least

@@ -78,6 +78,13 @@ def cmd_list_labs(args):
 cmd_list_labs.description = kci_admin.lab.description_get_list
 
 
+def cmd_remove_lab(args):
+    parser = kci_admin.lab.parser_remove()
+    args = parser.parse_args(args)
+    kci_admin.lab.request_remove(args.host, args.id)
+cmd_remove_lab.description = kci_admin.lab.description_remove
+
+
 def cmd_add_token(args):
     parser = kci_admin.token.parser_create()
     args = parser.parse_args(args)

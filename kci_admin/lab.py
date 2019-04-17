@@ -17,12 +17,14 @@
 
 from . import request as kci_request
 from . import request_get as kci_request_get
+from . import request_delete as kci_request_delete
 from . import parser as kci_parser
 from . import token
 
 
 description_create = "Create a lab entry"
 description_get_list = "List all the existing labs"
+description_remove = "Remove lab entry"
 
 
 def parser_create(descr=description_create):
@@ -42,6 +44,13 @@ def parser_list(descr=description_get_list):
     parser = kci_parser(descr)
     parser.add_argument('--lab-name',
                         help="Only show details for this given lab")
+    return parser
+
+
+def parser_remove(descr=description_remove):
+    parser = kci_parser(descr)
+    parser.add_argument('--id', metavar='ID', required=True,
+                        help='ObjectId (_id) of the lab to remove')
     return parser
 
 
@@ -78,3 +87,7 @@ def get_list(hostname):
         token_id = lab['token']['$oid']
         lab['token'] = tokens[token_id]['token']
     return data['result']
+
+
+def request_remove(hostname, id_):
+    return kci_request_delete(hostname, "/lab/{}".format(id_))
