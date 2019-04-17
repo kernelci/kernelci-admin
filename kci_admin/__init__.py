@@ -52,3 +52,9 @@ def request_get(hostname, path):
     response.raise_for_status()
     data = json.loads(response.content.decode('utf8'))
     return data
+
+
+def request_delete(hostname, path):
+    url, headers, _ = request(hostname, path)
+    response = requests.delete(url, headers=headers)
+    response.raise_for_status()

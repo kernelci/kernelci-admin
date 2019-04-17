@@ -17,11 +17,13 @@
 
 from . import request as kci_request
 from . import request_get as kci_request_get
+from . import  request_delete as kci_request_delete
 from . import parser as kci_parser
 
 
 description_create = "Create a user API token"
 description_get_list = "List all the existing tokens"
+description_remove = "Remove user API token"
 
 
 def parser_create(descr=description_create):
@@ -54,8 +56,19 @@ def parser_list(descr=description_get_list):
     return parser
 
 
+def parser_remove(descr=description_remove):
+    parser = kci_parser(descr)
+    parser.add_argument('--id', metavar='ID', required=True,
+                        help='ObjectId (_id) of the token to remove')
+    return parser
+
+
 def request_create(hostname, payload):
     return kci_request(hostname, "/token", payload)
+
+
+def request_remove(hostname, id_):
+    return kci_request_delete(hostname,'/token/{}'.format(id_))
 
 
 def get_list(hostname):

@@ -105,6 +105,13 @@ def cmd_list_tokens(args):
 cmd_list_tokens.description = kci_admin.token.description_get_list
 
 
+def cmd_remove_token(args):
+    parser = kci_admin.token.parser_remove()
+    args = parser.parse_args(args)
+    kci_admin.token.request_remove(args.host, args.id)
+cmd_remove_token.description = kci_admin.token.description_remove
+
+
 def main(argv):
     cmds = {}
     for name, obj in globals().items():
